@@ -20,8 +20,10 @@ The path to the callSSDSHS conda env must be added in the configuration file (ac
 BEDTools (2.20.0+)  
 MACS (2.1.2+)  
 R (3.2+)  
-R-bioconductor: rtracklayer module  
-R-bioconductor: shortread module  
+R: ggplot2 package  
+R: gridextra package  
+R-bioconductor: rtracklayer package  
+R-bioconductor: shortread package   
 
 ## Global variables required:
 $NXF_GENOMES   : Path to folder containing reference genomes for alignment
