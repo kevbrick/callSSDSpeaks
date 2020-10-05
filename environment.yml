@@ -11,3 +11,7 @@ dependencies:
   - r-ggplot2
   - r-gridextra
   - samtools=1.7
+  - perl-statistics-descriptive
+  - perl-getopt-long
+  - perl-math-round
+  - perl-list-util

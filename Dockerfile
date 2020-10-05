@@ -7,7 +7,7 @@ LABEL authors="Kevin Brick" \
 RUN apt-get update
 RUN apt-get -y --force-yes install libblas-dev
 
-COPY env2.yml /
+COPY environment.yml /
 RUN conda env create --quiet -f environment.yml && conda clean -a
 
 # Add conda installation dir to PATH (instead of doing 'conda activate')
