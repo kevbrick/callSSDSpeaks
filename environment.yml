@@ -1,0 +1,13 @@
+name: callSSDSpeaks
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bedtools=2.29.2
+  - bioconductor-shortread
+  - macs2=2.2.6
+  - r=3.6
+  - r-matrix
+  - r-ggplot2
+  - r-gridextra
+  - samtools=1.7

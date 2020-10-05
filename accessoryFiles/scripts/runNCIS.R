@@ -15,7 +15,7 @@ print(paste0("Output file   :",output))
 
 ##-----------------------------------------------------------------------------------
 library("NCIS", lib.loc=ncis_path)
-library('rtracklayer')
+#library('rtracklayer')
 library("ShortRead")
 
 res <- NCIS(treatment,control,"BED")

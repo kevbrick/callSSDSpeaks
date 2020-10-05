@@ -165,6 +165,7 @@ process callPeaks {
   path(control_bed)
   path(blacklist_bed)
   val(shuffle_percent)
+  path(accFiles)
 
   output:
   path("*peaks_sc.bed",   emit: allbed)
@@ -179,13 +180,13 @@ process callPeaks {
   nT=`cat ${treatment_bed} |wc -l`
   nPC=`perl -e 'print int('\$nT'*${shuffle_percent})'`
 
-  perl ${params.accessorydir}/scripts/pickNlines.pl ${treatment_bed} \$nPC >\$nPC.tmp
+  perl accessoryFiles/scripts/pickNlines.pl ${treatment_bed} \$nPC >\$nPC.tmp
   sort -k1,1 -k2n,2n -k3n,3n -k4,4 -k5,5 -k6,6 \$nPC.tmp |uniq >\$nPC.T.bed
 
   ## Just use chrom1: faster with analagous results
   grep -w chr1 \$nPC.T.bed >T.cs1.bed
   grep -w chr1 ${control_bed} >C.cs1.bed
-  Rscript ${params.accessorydir}/scripts/runNCIS.R T.cs1.bed C.cs1.bed ${params.accessorydir}/NCIS NCIS.out
+  Rscript accessoryFiles/scripts/runNCIS.R T.cs1.bed C.cs1.bed accessoryFiles/NCIS NCIS.out
   ratio=`cut -f1 NCIS.out`
 
   ## GET GENOME SIZE - BLACKLIST SIZE
@@ -195,7 +196,7 @@ process callPeaks {
 
   for i in {0..${satCurveReps}}; do
     thisName=${params.name}'.N'\$nPC'_${shuffle_percent}pc.'\$i
-    perl ${params.accessorydir}/scripts/pickNlines.pl ${treatment_bed} \$nPC >\$nPC.tmp
+    perl accessoryFiles/scripts/pickNlines.pl ${treatment_bed} \$nPC >\$nPC.tmp
 
     sort -k1,1 -k2n,2n -k3n,3n -k4,4 -k5,5 -k6,6 \$nPC.tmp |uniq >\$nPC.T.bed
 
@@ -223,7 +224,7 @@ process callPeaks {
     cat *1.00pc.0_peaks_sc.xls >${params.name}.peaks.xls
 
     ## Calculate strength
-    perl ${params.accessorydir}/scripts/normalizeStrengthByAdjacentRegions.pl --bed ${params.name}.peaks.bed \
+    perl accessoryFiles/scripts/normalizeStrengthByAdjacentRegions.pl --bed ${params.name}.peaks.bed \
          --in ${treatment_bed} --out ${params.name}.peaks.bedgraph --rc
   fi
   """
@@ -236,6 +237,7 @@ process makeSatCurve {
 
   input:
   path(saturation_curve_data)
+  path(accFiles)
 
   output:
   path("*satCurve.tab", emit: table)
@@ -273,7 +275,7 @@ process makeSatCurve {
   sub makeRScript{
   	my (\$sName,\$data,\$sampleName) = @_;
   	open RS, '>', \$sName;
-  	print RS 'source("${params.accessorydir}/scripts/satCurveHS.R")'."\\n";
+  	print RS 'source("accessoryFiles/scripts/satCurveHS.R")'."\\n";
   	print RS 'satCurveHS(fIN = "'.\$tf.'", sampleName = "'.\$sampleName.'")'."\\n";
   	close RS;
   }
@@ -282,12 +284,13 @@ process makeSatCurve {
 
 // OK ... let's start
 workflow {
-
+ 
+  accFiles  = channel.fromPath("${params.accessorydir}")
   shuf_beds = shufBEDs(tBed,cBed)
-  peaks     = callPeaks(shuf_beds.treatment, shuf_beds.control, blackList, satCurvePCs)
+  peaks     = callPeaks(shuf_beds.treatment, shuf_beds.control, blackList, satCurvePCs, accFiles.collect())
 
   if (useSatCurve){
-    satcurve  = makeSatCurve(peaks.allbed.collect())
+    satcurve  = makeSatCurve(peaks.allbed.collect(),accFiles.collect())
   }
 
 }
