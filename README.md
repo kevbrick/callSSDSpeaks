@@ -9,11 +9,10 @@ Nextflow (20.07.0+)
 ### How to run:
 nextflow run -c config.nf -profile singularity callSSDSpeaks.nf --tbed ssds.bed --cbed ctrl.bed --genome mm10 --name test 
 
-### Recommended:
-Singularity / Docker  
+### Recommended: Singularity / Docker  
 The dependencies for this pipeline are stored as a docker container that can be used by either Singularity (Tested) or Docker (Untested). 
 
-### Alternative 1:
+### Alternative 1: Conda (not recommended)
 Anaconda / miniconda 
 
 ### Conda environment: 
@@ -23,7 +22,7 @@ All dependencies can be installed using the included conda environment (accessor
   
 The path to the callSSDSHS conda env must be added in the configuration file (accessoryFiles/conf/config.nf).If you have an environment variable named $CONDA_ENVS pointing to your conda env folder, then config.nf can remain unchanged. 
 
-### Alternative 2: (not recommended): 
+### Alternative 2: Manual (not recommended): 
 BEDTools (2.20.0+)  
 MACS (2.1.2+)  
 R (3.6)  
