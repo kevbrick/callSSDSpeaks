@@ -4,9 +4,16 @@
 This nextflow pipeline is a simple workflow to call peaks in a standardized way from single-stranded DNA sequencing (SSDS; Khil et al. Genome Res. 2012) experiments. The pipeline can also build a peak calling saturation curve to estimate the value of deeper sequencing. 
 
 ### Requirements: 
-Nextflow (20.01.0+)
+Nextflow (20.07.0+)
+
+### How to run:
+nextflow run -c config.nf -profile singularity callSSDSpeaks.nf --tbed ssds.bed --cbed ctrl.bed --genome mm10 --name test 
 
 ### Recommended:
+Singularity / Docker  
+The dependencies for this pipeline are stored as a docker container that can be used by either Singularity (Tested) or Docker (Untested). 
+
+### Alternative 1:
 Anaconda / miniconda 
 
 ### Conda environment: 
@@ -16,16 +23,15 @@ All dependencies can be installed using the included conda environment (accessor
   
 The path to the callSSDSHS conda env must be added in the configuration file (accessoryFiles/conf/config.nf).If you have an environment variable named $CONDA_ENVS pointing to your conda env folder, then config.nf can remain unchanged. 
 
-## Alternative dependencies (if not using conda): 
+### Alternative 2: (not recommended): 
 BEDTools (2.20.0+)  
 MACS (2.1.2+)  
-R (3.2+)  
+R (3.6)  
 R: ggplot2 package  
 R: gridextra package  
-R-bioconductor: rtracklayer package  
 R-bioconductor: shortread package   
 
-## Global variables required:
+### Global variables required:
 $NXF_GENOMES   : Path to folder containing reference genomes for alignment
 $SLURM_JOBID   : Specifies the temporary subfolder to use  (see Temp folder requirements below)
 
