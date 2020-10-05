@@ -40,16 +40,17 @@ $NXF_GENOMES   : Path to folder containing reference genomes for alignment
 $SLURM_JOBID   : Specifies the temporary subfolder to use  (see Temp folder requirements below)
 
 ### NXF_GENOMES Folder structure
-Each reference genome should be contained in a separate folder (i.e. $NXF_GENOMES/mm10). The sub-structure within this folder should be as follows:
-$NXF_GENOMES/\<genome\>/genome.fa                : Genome fasta file
-$NXF_GENOMES/\<genome\>/genome.fa.fai            : Index of genome fasta file (samtools faidx)
-
+Each reference genome should be contained in a separate folder (i.e. $NXF_GENOMES/mm10). The sub-structure within this folder should be as follows:  
+  
+$NXF_GENOMES/\<genome\>/genome.fa                : Genome fasta file   
+$NXF_GENOMES/\<genome\>/genome.fa.fai            : Index of genome fasta file (samtools faidx)  
+  
 ### Temp folder requirements
-The pipeline requires a high-level temporary folder called /lscratch. On a SLURM-based HPC, each job is assigned a global id ($SLURM_JOBID) and this is appended to the temp folder name for each process. This can be modified in the config.nf file. Thus, there is a requirement for :
-
-/lscratch folder for temporary files
-SLURM_JOBID global variable for each HPC job.
-
+The pipeline requires a high-level temporary folder called /lscratch. On a SLURM-based HPC, each job is assigned a global id ($SLURM_JOBID) and this is appended to the temp folder name for each process. This can be modified in the config.nf file. Thus, there is a requirement for :  
+  
+/lscratch folder for temporary files  
+SLURM_JOBID global variable for each HPC job.  
+  
 ### Genomes support
 For any organism, there are three requirements:  
 1. genome FASTA file
