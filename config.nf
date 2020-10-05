@@ -23,6 +23,8 @@ manifest {
 
 process.container = 'kevbrick/callssdspeaks:1.3'
 
+executor = 'slurm'
+
 profiles {
   conda { process.conda = "$baseDir/environment.yml" }
   debug { process.beforeScript = 'echo $HOSTNAME' }

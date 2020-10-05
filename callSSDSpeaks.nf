@@ -5,7 +5,7 @@ nextflow.preview.dsl=2
 params.help=""
 
 // Pipeline version
-version = '1.2'
+version = '1.3'
 
 if (params.help) {
   log.info"""
