@@ -20,15 +20,17 @@ The path to the callSSDSHS conda env must be added in the configuration file (ac
 BEDTools (2.20.0+)  
 MACS (2.1.2+)  
 R (3.2+)  
-R-bioconductor: rtracklayer module  
-R-bioconductor: shortread module  
+R: ggplot2 package  
+R: gridextra package  
+R-bioconductor: rtracklayer package  
+R-bioconductor: shortread package   
 
 ## Global variables required:
 $NXF_GENOMES   : Path to folder containing reference genomes for alignment
 $SLURM_JOBID   : Specifies the temporary subfolder to use  (see Temp folder requirements below)
 
 ### NXF_GENOMES Folder structure
-Each reference genome should be contained in a separate folder (i.e. $NXF_GENOMES/mouse_mm10). The sub-structure within this folder should be as follows:
+Each reference genome should be contained in a separate folder (i.e. $NXF_GENOMES/mm10). The sub-structure within this folder should be as follows:
 $NXF_GENOMES/\<genome\>/genome.fa                : Genome fasta file
 $NXF_GENOMES/\<genome\>/genome.fa.fai            : Index of genome fasta file (samtools faidx)
 
