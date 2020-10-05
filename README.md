@@ -30,6 +30,10 @@ R (3.6)
 R: ggplot2 package  
 R: gridextra package  
 R-bioconductor: shortread package   
+Perl module: Getopt::Long  
+Perl module: Statistics::Descriptive  
+Perl module: Math::Round  
+Perl module: List::Util  
 
 ### Global variables required:
 $NXF_GENOMES   : Path to folder containing reference genomes for alignment
