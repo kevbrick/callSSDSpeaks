@@ -22,7 +22,7 @@ manifest {
 }
 
 //process.container = 'kevbrick/callssdspeaks:1.3'
-singularity.container="docker://kevbrick/callssdspeaks:latest"
+process.container="docker://kevbrick/callssdspeaks:1.3"
 
 executor = 'slurm'
 
