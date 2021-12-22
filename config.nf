@@ -21,7 +21,8 @@ manifest {
   description = 'Call hotspots from SSDS data. Author: Kevin Brick.'
 }
 
-process.container = 'kevbrick/callssdspeaks:1.3'
+//process.container = 'kevbrick/callssdspeaks:1.3'
+singularity.container="docker://kevbrick/callssdspeaks:latest"
 
 executor = 'slurm'
 

@@ -91,8 +91,8 @@ if (params.satcurve){
 
 def blackList  = file("${params.accessorydir}/blacklist/${params.genome}/blackList.bed")
 
-def genome_fa  = "\$NXF_GENOMES/${params.genome}/genome.fa"
-def genome_idx = "\$NXF_GENOMES/${params.genome}/genome.fa.fai"
+//def genome_fa  = "\$NXF_GENOMES/${params.genome}/genome.fa"
+def genome_idx = file(params.genome ? "${NXF_GENOMES}/${params.genome}/genome.fa.fai" : params.idx)
 
 def tBed = file(params.tbed)
 def cBed = file(params.cbed)
@@ -109,7 +109,6 @@ log.info " ---------------------------------------------------------------------
 log.info " --tbed         ${params.tbed} "
 log.info " --cbed         ${params.cbed} "
 log.info " --genome       ${params.genome} "
-log.info " --genome_fa    ${genome_fa} "
 log.info " --genome_idx   ${genome_idx} "
 log.info " --name         ${params.name} "
 log.info " --blacklist    ${blackList} "
@@ -164,6 +163,7 @@ process callPeaks {
   path(treatment_bed)
   path(control_bed)
   path(blacklist_bed)
+  path(genome_index)
   val(shuffle_percent)
   path(accFiles)
 
@@ -183,14 +183,16 @@ process callPeaks {
   perl accessoryFiles/scripts/pickNlines.pl ${treatment_bed} \$nPC >\$nPC.tmp
   sort -k1,1 -k2n,2n -k3n,3n -k4,4 -k5,5 -k6,6 \$nPC.tmp |uniq >\$nPC.T.bed
 
-  ## Just use chrom1: faster with analagous results
-  grep -w chr1 \$nPC.T.bed >T.cs1.bed
-  grep -w chr1 ${control_bed} >C.cs1.bed
+  ## Just use one chromosoms: faster with analagous results
+  chrom2use=`sort -k2rn,2rn ${genome_index} |head -n 1 |cut -f 1`
+  
+  grep -w \$chrom2use \$nPC.T.bed >T.cs1.bed
+  grep -w \$chrom2use ${control_bed} >C.cs1.bed
   Rscript accessoryFiles/scripts/runNCIS.R T.cs1.bed C.cs1.bed accessoryFiles/NCIS NCIS.out
   ratio=`cut -f1 NCIS.out`
 
   ## GET GENOME SIZE - BLACKLIST SIZE
-  tot_sz=`cut -f3 ${genome_idx} |tail -n1`
+  tot_sz=`cut -f3 ${genome_index} |tail -n1`
   bl_size=`perl -lane '\$tot+=(\$F[2]-\$F[1]); print \$tot' ${blacklist_bed} |tail -n1`
   genome_size=`expr \$tot_sz - \$bl_size`
 
@@ -287,7 +289,7 @@ workflow {
  
   accFiles  = channel.fromPath("${params.accessorydir}")
   shuf_beds = shufBEDs(tBed,cBed)
-  peaks     = callPeaks(shuf_beds.treatment, shuf_beds.control, blackList, satCurvePCs, accFiles.collect())
+  peaks     = callPeaks(shuf_beds.treatment, shuf_beds.control, blackList, genome_idx, satCurvePCs, accFiles.collect())
 
   if (useSatCurve){
     satcurve  = makeSatCurve(peaks.allbed.collect(),accFiles.collect())
