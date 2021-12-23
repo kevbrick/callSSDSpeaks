@@ -6,8 +6,49 @@ This nextflow pipeline is a simple workflow to call peaks in a standardized way 
 ### Requirements: 
 Nextflow (20.07.0+)
 
+NXF_GENOMES environment variable:
+This should point to a folder that contains a nameed subfolder for the reference genome of interest (i.e. $NXF_GENOMES/mm10). For each reference genome, this folder must contain the reference genome fasta file named **genome.fa** and a fasta index named **genome.fa.fai**. 
+```
+>export NXF_GENOMES='/data/$USER/genomes'
+>ls $NXF_GENOMES
+hg38  mm10
+>ls $NXF_GENOMES/mm10
+genome.fa.fai
+```
+OR 
+a genome index file (genome.fa.fai; specify with: 
+```--idx <<full path to genome.fa.fai>>```
+
+#### Temp folder requirements
+The pipeline requires a high-level temporary folder called /lscratch. On a SLURM-based HPC, each job is assigned a global id ($SLURM_JOBID) and this is appended to the temp folder name for each process. This can be modified in the config.nf file. Thus, there is a requirement for :  
+  
+/lscratch folder for temporary files  
+SLURM_JOBID global variable for each HPC job.  
+  
 ### How to run:
-nextflow run -c config.nf -profile singularity callSSDSpeaks.nf --tbed ssds.bed --cbed ctrl.bed --genome mm10 --name test 
+nextflow run -c \<\<config file\>\> -profile \<\<profiles\>\> callSSDSpeaks.nf --tbed \<\<full path to ssDNA bed file\>\> --cbed \<\<full path to control ssDNA bed file\>\> --genome mm10 --name test --accessorydir \<\<full path to accessorydir folder (part of this repo)\>\> --outdir XX
+
+3. Genome blacklist BED file (put in accessoryFiles/blacklist)  
+   Blacklist files provided for mouse mm10 and human hg38 genomes. 
+   A placeholder blacklist BED file must be used if blacklisting is not required or if blacklisted regions are unknown.
+   
+#### How to run (example on NIH biowulf):
+```
+module load nextflow singularity
+  
+cd /data/$USER && git clone https://github.com/kevbrick/callSSDSpeaks.git
+  
+curl https://raw.githubusercontent.com/nf-core/configs/master/conf/nihbiowulf.config >/data/$USER/callSSDSpeaks/nihbiowulf.config
+
+nextflow run -c /data/$USER/callSSDSpeaks/config.nf,/data/$USER/callSSDSpeaks/nihbiowulf.config 
+             -profile slurm /data/$USER/callSSDSpeaks.nf 
+             --tbed /data/$USER/ssds/treatment.ssDNA_type1.bed 
+             --cbed /data/$USER/ssds/control.ssDNA_type1.bed 
+             --genome mm10 
+             --name test 
+             --accessorydir /data/$USER/callSSDSpeaks/accessoryFiles 
+             --outdir /data/$USER/callSSDSpeaks_output
+```
 
 ### Recommended: Singularity / Docker  
 The dependencies for this pipeline are stored as a docker container that can be used by either Singularity (Tested) or Docker (Untested). 
@@ -34,26 +75,5 @@ Perl module: Statistics::Descriptive
 Perl module: Math::Round  
 Perl module: List::Util  
 
-### Global variables required:
-$NXF_GENOMES   : Path to folder containing reference genomes for alignment
-$SLURM_JOBID   : Specifies the temporary subfolder to use  (see Temp folder requirements below)
 
-### NXF_GENOMES Folder structure
-Each reference genome should be contained in a separate folder (i.e. $NXF_GENOMES/mm10). The sub-structure within this folder should be as follows:  
-  
-$NXF_GENOMES/\<genome\>/genome.fa                : Genome fasta file   
-$NXF_GENOMES/\<genome\>/genome.fa.fai            : Index of genome fasta file (samtools faidx)  
-  
-### Temp folder requirements
-The pipeline requires a high-level temporary folder called /lscratch. On a SLURM-based HPC, each job is assigned a global id ($SLURM_JOBID) and this is appended to the temp folder name for each process. This can be modified in the config.nf file. Thus, there is a requirement for :  
-  
-/lscratch folder for temporary files  
-SLURM_JOBID global variable for each HPC job.  
-  
-### Genomes support
-For any organism, there are three requirements:  
-1. genome FASTA file
-2. genome FASTA index
-3. Genome blacklist BED file (in accessoryFiles/blacklist)  
-   Blacklist files provided for mouse mm10 and human hg38 genomes. 
-   A placeholder blacklist BED file must be used if blacklisting is not required or if blacklisted regions are unknown.
+
